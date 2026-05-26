@@ -137,6 +137,20 @@ export async function validateSkillStructure(skillDir, name) {
           `${name}: SKILL.md frontmatter name "${nameLine[1]}" does not match folder "${name}"`,
         );
       }
+      const descriptionLine = /^description:\s*(.+?)\s*$/m.exec(m[1]);
+      if (!descriptionLine) {
+        errors.push(`${name}: SKILL.md frontmatter has no "description:" field`);
+      } else {
+        const description = descriptionLine[1].trim();
+        const isQuoted =
+          (description.startsWith('"') && description.endsWith('"')) ||
+          (description.startsWith("'") && description.endsWith("'"));
+        if (!isQuoted && /:\s/.test(description)) {
+          errors.push(
+            `${name}: SKILL.md frontmatter description contains ": " and must be quoted`,
+          );
+        }
+      }
     }
   }
   return errors;
